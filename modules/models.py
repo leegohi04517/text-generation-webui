@@ -206,6 +206,7 @@ def huggingface_loader(model_name):
         elif shared.args.alpha_value > 1:
             params['rope_scaling'] = {'type': 'dynamic', 'factor': RoPE.get_alpha_value(shared.args.alpha_value, shared.args.rope_freq_base)}
 
+        logger.info(f"LoaderClass: {LoaderClass}\n params: {params}")
         model = LoaderClass.from_pretrained(path_to_model, **params)
 
     return model
