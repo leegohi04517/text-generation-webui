@@ -106,6 +106,7 @@ def _generate_reply(question, state, stopping_strings=None, is_chat=False, escap
 
 
 def encode(prompt, add_special_tokens=True, add_bos_token=True, truncation_length=None):
+    print(f"add_special_tokens:{add_special_tokens} add_bos_token:{add_bos_token} truncation_length:{truncation_length}\nprompt: \n{prompt}")
     if shared.tokenizer is None:
         raise ValueError('No tokenizer is loaded')
 
