@@ -4,6 +4,7 @@ import re
 import time
 import traceback
 from pathlib import Path
+import pdb
 
 import torch
 import transformers
@@ -112,7 +113,7 @@ def load_tokenizer(model_name, model):
 
 
 def huggingface_loader(model_name):
-
+    pdb.set_trace()
     path_to_model = Path(f'{shared.args.model_dir}/{model_name}')
     params = {
         'low_cpu_mem_usage': True,
