@@ -40,7 +40,7 @@ def load_quantized(model_name):
         quantize_config =  BaseQuantizeConfig(
             bits=4,  # quantize model to 4-bit
             group_size=-1,  # it is recommended to set the value to 128
-            desc_act=true
+            desc_act=True
         )
 
     # Define the params for AutoGPTQForCausalLM.from_quantized
