@@ -64,6 +64,7 @@ def load_model(model_name, loader=None):
         'ExLlamav2': ExLlamav2_loader,
         'ExLlamav2_HF': ExLlamav2_HF_loader,
         'ctransformers': ctransformers_loader,
+        'AutoAWQ': AutoAWQ_loader,
     }
 
     if loader is None:
@@ -213,14 +214,6 @@ def huggingface_loader(model_name):
     return model
 
 
-def RWKV_loader(model_name):
-    from modules.RWKV import RWKVModel, RWKVTokenizer
-
-    model = RWKVModel.from_pretrained(Path(f'{shared.args.model_dir}/{model_name}'), dtype="fp32" if shared.args.cpu else "bf16" if shared.args.bf16 else "fp16", device="cpu" if shared.args.cpu else "cuda")
-    tokenizer = RWKVTokenizer.from_pretrained(Path(shared.args.model_dir))
-    return model, tokenizer
-
-
 def llamacpp_loader(model_name):
     from modules.llamacpp_model import LlamaCppModel
 
@@ -286,6 +279,24 @@ def ctransformers_loader(model_name):
     model, tokenizer = ctrans.from_pretrained(model_file)
     return model, tokenizer
 
+def AutoAWQ_loader(model_name):
+   from awq import AutoAWQForCausalLM
+
+   model_dir = Path(f'{shared.args.model_dir}/{model_name}')
+
+   if shared.args.deepspeed:
+       logger.warn("AutoAWQ is incompatible with deepspeed")
+
+   model = AutoAWQForCausalLM.from_quantized(
+       quant_path=model_dir,
+       max_new_tokens=shared.args.max_seq_len,
+       trust_remote_code=shared.args.trust_remote_code,
+       fuse_layers=not shared.args.no_inject_fused_attention,
+       max_memory=get_max_memory_dict(),
+       batch_size=shared.args.n_batch,
+       safetensors=not shared.args.trust_remote_code)
+
+   return model
 
 def GPTQ_loader(model_name):
 
@@ -335,6 +346,18 @@ def ExLlamav2_HF_loader(model_name):
     from modules.exllamav2_hf import Exllamav2HF
 
     return Exllamav2HF.from_pretrained(model_name)
+
+
+def RWKV_loader(model_name):
+    '''
+    This loader is not currently maintained as RWKV can now be loaded
+    through the transformers library.
+    '''
+    from modules.RWKV import RWKVModel, RWKVTokenizer
+
+    model = RWKVModel.from_pretrained(Path(f'{shared.args.model_dir}/{model_name}'), dtype="fp32" if shared.args.cpu else "bf16" if shared.args.bf16 else "fp16", device="cpu" if shared.args.cpu else "cuda")
+    tokenizer = RWKVTokenizer.from_pretrained(Path(shared.args.model_dir))
+    return model, tokenizer
 
 
 def get_max_memory_dict():

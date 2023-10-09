@@ -42,7 +42,7 @@ settings = {
     'negative_prompt': '',
     'truncation_length': 2048,
     'truncation_length_min': 0,
-    'truncation_length_max': 16384,
+    'truncation_length_max': 32768,
     'custom_stopping_strings': '',
     'auto_max_new_tokens': False,
     'max_tokens_second': 0,
@@ -115,9 +115,9 @@ parser.add_argument('--use_double_quant', action='store_true', help='use_double_
 
 # llama.cpp
 parser.add_argument('--threads', type=int, default=0, help='Number of threads to use.')
+parser.add_argument('--threads-batch', type=int, default=0, help='Number of threads to use for batches/prompt processing.')
 parser.add_argument('--n_batch', type=int, default=512, help='Maximum number of prompt tokens to batch together when calling llama_eval.')
 parser.add_argument('--no-mmap', action='store_true', help='Prevent mmap from being used.')
-parser.add_argument('--low-vram', action='store_true', help='Low VRAM Mode')
 parser.add_argument('--mlock', action='store_true', help='Force the system to keep the model in RAM.')
 parser.add_argument('--mul_mat_q', action='store_true', help='Activate new mulmat kernels.')
 parser.add_argument('--cache-capacity', type=str, help='Maximum cache capacity. Examples: 2000MiB, 2GiB. When provided without units, bytes will be assumed.')
@@ -125,6 +125,7 @@ parser.add_argument('--n-gpu-layers', type=int, default=0, help='Number of layer
 parser.add_argument('--tensor_split', type=str, default=None, help="Split the model across multiple GPUs, comma-separated list of proportions, e.g. 18,17")
 parser.add_argument('--n_ctx', type=int, default=2048, help='Size of the prompt context.')
 parser.add_argument('--llama_cpp_seed', type=int, default=0, help='Seed for llama-cpp models. Default 0 (random)')
+parser.add_argument('--numa', action='store_true', help='Activate NUMA task allocation for llama.cpp')
 
 # GPTQ
 parser.add_argument('--wbits', type=int, default=0, help='Load a pre-quantized model with specified precision in bits. 2, 3, 4 and 8 are supported.')
@@ -200,10 +201,10 @@ if args.trust_remote_code:
     logger.warning("trust_remote_code is enabled. This is dangerous.")
 if args.share:
     logger.warning("The gradio \"share link\" feature uses a proprietary executable to create a reverse tunnel. Use it with care.")
-if args.multi_user:
-    logger.warning("The multi-user mode is highly experimental. DO NOT EXPOSE IT TO THE INTERNET.")
 if any((args.listen, args.share)) and not any((args.gradio_auth, args.gradio_auth_path)):
-    logger.warning("\nYou are potentially exposing the web UI to the internet without any access password.\nYou can create one with the \"--gradio-auth\" flag like this: --gradio-auth username:password (replace username:password with your own).")
+    logger.warning("\nYou are potentially exposing the web UI to the entire internet without any access password.\nYou can create one with the \"--gradio-auth\" flag like this:\n\n--gradio-auth username:password\n\nMake sure to replace username:password with your own.")
+    if args.multi_user:
+        logger.warning("\nThe multi-user mode is highly experimental and should not be shared publicly.")
 
 
 def fix_loader_name(name):
@@ -231,6 +232,8 @@ def fix_loader_name(name):
         return 'ExLlamav2_HF'
     elif name in ['ctransformers', 'ctranforemrs', 'ctransformer']:
         return 'ctransformers'
+    elif name in ['autoawq', 'awq', 'auto-awq']:
+        return 'AutoAWQ'
 
 
 def add_extension(name):
