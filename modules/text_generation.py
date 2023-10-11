@@ -61,7 +61,7 @@ def _generate_reply(question, state, stopping_strings=None, is_chat=False, escap
             all_stop_strings += st
 
     if shared.args.verbose:
-        print(f'original_question: \n{original_question}\n--------------------\n')
+        print(f'---------start_original_question--------- \n{original_question}\n--------------------\n')
 
     shared.stop_everything = False
     clear_torch_cache()
@@ -326,8 +326,8 @@ def generate_reply_HF(question, original_question, seed, state, stopping_strings
 
     if shared.args.verbose:
         output_dict = {key: value for key, value in generate_params.items() if key not in ['inputs', 'inputs_embeds']}
-        print(f"prompt:\n{question}")
-        print(f"params:\n{output_dict}")
+        print(f"---------start_prompt--------- :\n{question}")
+        print(f"---------start_params--------- :\n{output_dict}")
 
     t0 = time.time()
     try:
