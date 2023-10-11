@@ -324,6 +324,11 @@ def generate_reply_HF(question, original_question, seed, state, stopping_strings
     apply_extensions('logits_processor', processor, input_ids)
     generate_params['logits_processor'] = processor
 
+    if shared.args.verbose:
+        output_dict = {key: value for key, value in generate_params.items() if key not in ['inputs', 'inputs_embeds']}
+        print(f"prompt:\n{question}\n")
+        print(f"params:\n{output_dict}\n")
+
     t0 = time.time()
     try:
         if not is_chat and not shared.is_seq2seq:
