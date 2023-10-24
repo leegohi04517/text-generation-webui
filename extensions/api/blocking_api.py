@@ -61,7 +61,7 @@ class Handler(BaseHTTPRequestHandler):
             for a in generator:
                 answer = a
 
-            if answer == '':
+            if not answer.strip():
                 print("error: empty reply!")
 
             print(f"reply:{answer}")
