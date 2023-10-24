@@ -61,10 +61,10 @@ class Handler(BaseHTTPRequestHandler):
             for a in generator:
                 answer = a
 
-            if not answer:
-                print(f"error: empty reply!")
+            if answer == '':
+                print("error: empty reply!")
 
-            print(f"reply:\n{answer}")
+            print(f"reply:{answer}")
 
             response = json.dumps({
                 'results': [{
