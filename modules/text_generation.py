@@ -216,8 +216,6 @@ def fix_galactica(s):
 
 
 def get_reply_from_output_ids(output_ids, input_ids, original_question, state, is_chat=False):
-    import pdb
-    pdb.set_trace()
     if shared.is_seq2seq:
         reply = decode(output_ids, state['skip_special_tokens'])
     else:
