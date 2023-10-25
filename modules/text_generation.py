@@ -331,7 +331,7 @@ def generate_reply_HF(question, original_question, seed, state, stopping_strings
         output_dict = {key: value for key, value in generate_params.items() if key not in ['inputs', 'inputs_embeds']}
         print(f"---------start_prompt--------- :\n{question}")
         print(f"---------start_params--------- :\n{output_dict}")
-
+    pdb.set_trace()
     t0 = time.time()
     try:
         if not is_chat and not shared.is_seq2seq:
