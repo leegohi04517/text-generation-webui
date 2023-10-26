@@ -75,7 +75,6 @@ def _generate_reply(question, state, stopping_strings=None, is_chat=False, escap
 
     # Generate
     for reply in generate_func(question, original_question, seed, state, stopping_strings, is_chat=is_chat):
-        print(f"==============reply:{reply}")
         if escape_html:
             reply = html.escape(reply)
 
