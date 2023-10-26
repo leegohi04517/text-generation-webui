@@ -221,7 +221,7 @@ def get_reply_from_output_ids(output_ids, input_ids, original_question, state, i
     else:
         new_tokens = len(output_ids) - len(input_ids[0])
         reply = decode(output_ids[-new_tokens:], state['skip_special_tokens'])
-        print(f"==========original reply:{reply} new_tokens:{new_tokens}")
+        print(f"==========original reply:{reply} new_tokens:{new_tokens} input_tokens:{len(input_ids[0])}")
         # Prevent LlamaTokenizer from skipping a space
         if type(shared.tokenizer) in [transformers.LlamaTokenizer, transformers.LlamaTokenizerFast] and len(output_ids) > 0:
             if shared.tokenizer.convert_ids_to_tokens(int(output_ids[-new_tokens])).startswith('▁'):
