@@ -28,14 +28,15 @@ def generate_reply(*args, **kwargs):
     shared.generation_lock.acquire()
     global index
     index += 1
-    print(f"generate_reply obtained index:{index} time:{time.time()}")
+    start_time = time.time()
+    print(f"generate_reply obtained index:{index} time:{start_time}")
     output = ''
     try:
         for result in _generate_reply(*args, **kwargs):
             output = result
             yield result
     finally:
-        print(f"generate_reply release index:{index} with result:{output} time:{time.time()}")
+        print(f"generate_reply release index:{index} with result:{output} costTime:{time.time()-start_time}")
         shared.generation_lock.release()
 
 
