@@ -36,7 +36,8 @@ def generate_reply(*args, **kwargs):
             output = result
             yield result
     finally:
-        print(f"generate_reply release index:{index} with result:{output} costTime:{time.time()-start_time}")
+        cost_time = time.time() - start_time
+        print(f"generate_reply release index:{index} costTime:{cost_time} with result:{output} ")
         shared.generation_lock.release()
 
 
