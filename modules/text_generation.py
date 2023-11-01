@@ -22,14 +22,18 @@ from modules.grammar import GrammarLogitsProcessor
 from modules.html_generator import generate_4chan_html, generate_basic_html
 from modules.logging_colors import logger
 from modules.models import clear_torch_cache, local_rank
-
+index = 0
 
 def generate_reply(*args, **kwargs):
     shared.generation_lock.acquire()
+    global index
+    index += 1
+    print(f"generate_reply obtained index:{index}")
     try:
         for result in _generate_reply(*args, **kwargs):
             yield result
     finally:
+        print(f"generate_reply release index:{index}")
         shared.generation_lock.release()
 
 
