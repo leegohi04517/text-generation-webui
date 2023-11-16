@@ -22,22 +22,13 @@ from modules.grammar import GrammarLogitsProcessor
 from modules.html_generator import generate_4chan_html, generate_basic_html
 from modules.logging_colors import logger
 from modules.models import clear_torch_cache, local_rank
-index = 0
 
 def generate_reply(*args, **kwargs):
     shared.generation_lock.acquire()
-    global index
-    index += 1
-    start_time = time.time()
-    print(f"generate_reply obtained index:{index} time:{start_time}")
-    output = ''
     try:
         for result in _generate_reply(*args, **kwargs):
-            output = result
             yield result
     finally:
-        cost_time = time.time() - start_time
-        print(f"generate_reply release index:{index} costTime:{cost_time} with result:{output} ")
         shared.generation_lock.release()
 
 
@@ -67,9 +58,6 @@ def _generate_reply(question, state, stopping_strings=None, is_chat=False, escap
     for st in (stopping_strings, ast.literal_eval(f"[{state['custom_stopping_strings']}]")):
         if type(st) is list and len(st) > 0:
             all_stop_strings += st
-
-    if shared.args.verbose:
-        print(f'---------start_original_question--------- \n{original_question}\n--------------------\n')
 
     shared.stop_everything = False
     clear_torch_cache()
@@ -334,8 +322,8 @@ def generate_reply_HF(question, original_question, seed, state, stopping_strings
 
     if shared.args.verbose:
         output_dict = {key: value for key, value in generate_params.items() if key not in ['inputs', 'inputs_embeds']}
-        print(f"---------start_prompt--------- :\n{question}")
-        print(f"---------start_params--------- :\n{output_dict}")
+        print(f"---------Prompt--------- :\n{question}")
+        print(f"---------Params--------- :\n{output_dict}")
     t0 = time.time()
     try:
         if not is_chat and not shared.is_seq2seq:

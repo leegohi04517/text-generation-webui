@@ -42,7 +42,8 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])
         body = json.loads(self.rfile.read(content_length).decode('utf-8'))
-        print(f"body:\n{body}")
+        print("===============do_POST START==============")
+        print(f"POST BODY:\n{body}")
 
         if self.path == '/api/v1/generate':
             self.send_response(200)
@@ -62,7 +63,7 @@ class Handler(BaseHTTPRequestHandler):
                 answer = a
 
             if not answer.strip():
-                print("error: empty reply!")
+                print("===========ERROR: empty reply!==============")
 
             print(f"reply:{answer}")
 
@@ -73,6 +74,7 @@ class Handler(BaseHTTPRequestHandler):
             })
 
             self.wfile.write(response.encode('utf-8'))
+            print("===============do_POST END==============")
 
         elif self.path == '/api/v1/chat':
             self.send_response(200)
