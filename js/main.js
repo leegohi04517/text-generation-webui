@@ -222,6 +222,13 @@ for(i = 0; i < noBackgroundelements.length; i++) {
   noBackgroundelements[i].parentNode.parentNode.parentNode.style.alignItems = "center";
 }
 
+const slimDropdownElements = document.querySelectorAll('.slim-dropdown');
+for (i = 0; i < slimDropdownElements.length; i++) {
+    const parentNode = slimDropdownElements[i].parentNode;
+    parentNode.style.background = 'transparent';
+    parentNode.style.border = '0';
+}
+
 //------------------------------------------------
 // Create the hover menu in the chat tab
 // The show/hide events were adapted from:
@@ -305,6 +312,10 @@ document.addEventListener("click", function (event) {
   if (!isMouseOverButtonOrMenu() && menu.style.display === "flex") {
     hideMenu();
   }
+
+  if (event.target.classList.contains("pfp_character")) {
+    toggleBigPicture();
+  }
 });
 
 //------------------------------------------------
@@ -328,3 +339,37 @@ document.getElementById("show-controls").parentNode.style.bottom = "0px";
 // Focus on the chat input
 //------------------------------------------------
 document.querySelector("#chat-input textarea").focus();
+
+//------------------------------------------------
+// Show enlarged character picture when the profile
+// picture is clicked on
+//------------------------------------------------
+let bigPictureVisible = false;
+
+function addBigPicture() {
+  var imgElement = document.createElement("img");
+  var timestamp = new Date().getTime();
+  imgElement.src = "/file/cache/pfp_character.png?time=" + timestamp;
+  imgElement.classList.add("bigProfilePicture");
+
+  var imgElementParent = document.getElementById("chat").parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode;
+  imgElementParent.appendChild(imgElement);
+}
+
+function deleteBigPicture() {
+  var bigProfilePictures = document.querySelectorAll('.bigProfilePicture');
+  bigProfilePictures.forEach(function (element) {
+    element.parentNode.removeChild(element);
+  });
+}
+
+function toggleBigPicture() {
+  if(bigPictureVisible) {
+    deleteBigPicture();
+    bigPictureVisible = false;
+  } else {
+    addBigPicture();
+    bigPictureVisible = true;
+  }
+}
+
